@@ -813,7 +813,7 @@ footer {
     gap: 36px;
     align-items: start;
     padding-bottom: 34px;
-    border-bottom: 1px solid var(--line);
+    /*border-bottom: 1px solid var(--line);*/
 }
 
 .about-simple-intro h2 {
@@ -2079,5 +2079,59 @@ nav {
         animation-iteration-count: 1 !important;
         scroll-behavior: auto !important;
         transition-duration: 1ms !important;
+    }
+}
+
+/* =====================================================
+   ABOUT DEVELOPER PHOTO
+===================================================== */
+
+.about-developer-section {
+    align-items: center;
+}
+
+.developer-visual {
+    display: grid;
+    gap: 18px;
+    align-content: start;
+}
+
+.developer-photo {
+    width: min(280px, 100%);
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 18px 42px rgba(24, 35, 39, 0.12);
+}
+
+.developer-photo img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 220ms ease;
+}
+
+.developer-photo:hover img {
+    transform: scale(1.035);
+}
+
+.developer-copy {
+    align-self: center;
+}
+
+@media (max-width: 900px) {
+    .developer-photo {
+        width: min(240px, 100%);
+    }
+}
+
+@media (max-width: 560px) {
+    .developer-photo {
+        width: 100%;
+        max-width: 280px;
     }
 }
