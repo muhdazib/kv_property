@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction | KVProperty</title>
+    <link rel="stylesheet" href="style.css?v=20260619-flair-motion">
+</head>
+<body class="prediction-page">
+    <nav>
+        <a class="logo" href="index.html" aria-label="KVProperty home"><img src="assets/KVProperty_no_bg.png?v=20260619-logo-final" alt="KVProperty"></a>
+        <div class="nav-links" aria-label="Primary navigation">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="map.html">Map</a>
+            <a href="about.html">About</a>
+            <a href="prediction.html" class="active">Prediction</a>
+        </div>
+    </nav>
+
+    <header class="page-hero">
+        <div class="page-title">
+            <div>
+                <h1>Price Prediction</h1>
+            </div>
+            <p>
+                Estimate residential value using property details and nearby location context.
+            </p>
+        </div>
+    </header>
+
+    <main class="prediction-shell">
+        <section class="streamlit-frame-wrap" aria-label="Embedded valuation workspace">
+            <iframe
+                class="streamlit-frame"
+                title="KVProperty Valuation Workspace"
+                src="https://kvpropertyprediction.streamlit.app"
+                allow="clipboard-read; clipboard-write; fullscreen">
+            </iframe>
+        </section>
+
+        <p class="dashboard-note">
+            Prediction loads when Streamlit is running.
+        </p>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-main">
+            <section class="footer-brand">
+                <div class="footer-logo"><img src="assets/KVProperty_no_bg.png?v=20260619-logo-final" alt="KVProperty"></div>
+                <p>Property intelligence for exploring Klang Valley prices, locations, access and nearby market signals.</p>
+            </section>
+
+            <section class="footer-links" aria-label="Quick links">
+                <h2>Quick Links</h2>
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="map.html">Map</a>
+                <a href="about.html">About</a>
+                <a href="prediction.html">Prediction</a>
+            </section>
+
+            <section class="footer-tech" aria-label="Technologies used">
+                <h2>Built With</h2>
+                <div>
+                    <span>Python</span>
+                    <span>Power BI</span>
+                    <span>Streamlit</span>
+                    <span>GeoJSON</span>
+                    <span>HTML</span>
+                    <span>CSS</span>
+                    <span>JavaScript</span>
+                </div>
+            </section>
+
+            <section class="footer-meta">
+                <h2>Focus</h2>
+                <p><span>Region</span> Klang Valley</p>
+                <p><span>Domain</span> Residential Property</p>
+                <p><span>Output</span> Dashboard, Map & Prediction</p>
+            </section>
+        </div>
+    </footer>
+</body>
+</html>
+
+
+
+
+

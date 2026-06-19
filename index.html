@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KVProperty | Property Intelligence</title>
+    <link rel="stylesheet" href="style.css?v=20260619-flair-motion">
+</head>
+<body>
+    <nav>
+        <a class="logo" href="index.html" aria-label="KVProperty home"><img src="assets/KVProperty_no_bg.png?v=20260619-logo-final" alt="KVProperty"></a>
+        <div class="nav-links" aria-label="Primary navigation">
+            <a href="index.html" class="active">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="map.html">Map</a>
+            <a href="about.html">About</a>
+            <a href="prediction.html">Prediction</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to KVProperty</h1>
+            <p>
+                Explore Klang Valley's residential property prices, locations and nearby access in one place.
+            </p>
+            <div class="hero-buttons">
+                <a href="dashboard.html" class="btn-primary">View Dashboard</a>
+                <a href="map.html" class="btn-secondary">Explore Map</a>
+            </div>
+        </div>
+
+        <div class="hero-stats" aria-label="Market coverage summary">
+            <div class="hero-stat">
+                <strong>123,844</strong>
+                <span>Transactions analysed</span>
+            </div>
+            <div class="hero-stat">
+                <strong>161</strong>
+                <span>Railway stations</span>
+            </div>
+            <div class="hero-stat">
+                <strong>201</strong>
+                <span>Highway points</span>
+            </div>
+            <div class="hero-stat">
+                <strong>1,280+</strong>
+                <span>Amenity signals</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="overview fade-up">
+        <div class="container overview-layout">
+            <div>
+                <span class="kicker">Market platform</span>
+                <h2>Location data. Clearer decisions.</h2>
+            </div>
+            <div class="overview-copy">
+                <p>
+                    KVProperty helps teams scan markets, compare districts and assess location value faster.
+                </p>
+                <div class="insight-list">
+                    <div class="insight-row">
+                        <strong>Location signal</strong>
+                        <span>Compare access to railways, highways, malls, universities and economic zones.</span>
+                    </div>
+                    <div class="insight-row">
+                        <strong>Market pulse</strong>
+                        <span>Track transactions, district performance and price movement.</span>
+                    </div>
+                    <div class="insight-row">
+                        <strong>Valuation support</strong>
+                        <span>Support pricing, acquisition and portfolio decisions.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="data-layers fade-up">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <span class="kicker">Market coverage</span>
+                    <h2>Property signals in one place.</h2>
+                </div>
+                <p>
+                    See price, access and surrounding activity together.
+                </p>
+            </div>
+
+            <div class="layer-grid">
+                <article class="layer-card">
+                    <span class="layer-tag">Access</span>
+                    <h3>Infrastructure access</h3>
+                    <div class="metric">
+                        <span class="metric-number">161</span>
+                        <span class="metric-label">Railway stations</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-number">201</span>
+                        <span class="metric-label">Highway access points</span>
+                    </div>
+                    <p>Measure transport access and residential appeal.</p>
+                </article>
+
+                <article class="layer-card">
+                    <span class="layer-tag">Activity</span>
+                    <h3>Amenity strength</h3>
+                    <div class="metric">
+                        <span class="metric-number">1,031</span>
+                        <span class="metric-label">Economic zones</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-number">249</span>
+                        <span class="metric-label">Malls and universities</span>
+                    </div>
+                    <p>Identify nearby commercial, education and lifestyle anchors.</p>
+                </article>
+
+                <article class="layer-card">
+                    <span class="layer-tag">Market</span>
+                    <h3>Transaction evidence</h3>
+                    <div class="metric">
+                        <span class="metric-number">123,844</span>
+                        <span class="metric-label">Residential records</span>
+                    </div>
+                    <p>Use real transactions across districts and property types.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+    <footer class="site-footer">
+        <div class="footer-main">
+            <section class="footer-brand">
+                <div class="footer-logo"><img src="assets/KVProperty_no_bg.png?v=20260619-logo-final" alt="KVProperty"></div>
+                <p>Property intelligence for exploring Klang Valley prices, locations, access and nearby market signals.</p>
+            </section>
+
+            <section class="footer-links" aria-label="Quick links">
+                <h2>Quick Links</h2>
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="map.html">Map</a>
+                <a href="about.html">About</a>
+                <a href="prediction.html">Prediction</a>
+            </section>
+
+            <section class="footer-tech" aria-label="Technologies used">
+                <h2>Built With</h2>
+                <div>
+                    <span>Python</span>
+                    <span>Power BI</span>
+                    <span>Streamlit</span>
+                    <span>GeoJSON</span>
+                    <span>HTML</span>
+                    <span>CSS</span>
+                    <span>JavaScript</span>
+                </div>
+            </section>
+
+            <section class="footer-meta">
+                <h2>Focus</h2>
+                <p><span>Region</span> Klang Valley</p>
+                <p><span>Domain</span> Residential Property</p>
+                <p><span>Output</span> Dashboard, Map & Prediction</p>
+            </section>
+        </div>
+    </footer>
+
+    <script>
+        const fadeElements = document.querySelectorAll('.fade-up');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                }
+            });
+        }, { threshold: 0.16 });
+        fadeElements.forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

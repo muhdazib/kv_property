@@ -1,0 +1,496 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Map | KVProperty</title>
+    <link rel="stylesheet" href="style.css?v=20260619-flair-motion">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+    <nav>
+        <a class="logo" href="index.html" aria-label="KVProperty home"><img src="assets/KVProperty_no_bg.png?v=20260619-logo-final" alt="KVProperty"></a>
+        <div class="nav-links" aria-label="Primary navigation">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="map.html" class="active">Map</a>
+            <a href="about.html">About</a>
+            <a href="prediction.html">Prediction</a>
+        </div>
+    </nav>
+
+    <header class="page-hero">
+        <div class="page-title">
+            <div>
+                <h1>Location Map</h1>
+            </div>
+            <p>
+                Explore property activity, transport access and nearby amenities by district.
+            </p>
+        </div>
+    </header>
+
+    <main class="map-page-container">
+
+        <section class="map-controls" aria-label="Map controls">
+            <div class="filter-group">
+                <label for="districtFilter">District filter</label>
+                <select id="districtFilter">
+                    <option value="all">All Districts</option>
+                    <option value="Gombak">Gombak</option>
+                    <option value="Klang">Klang</option>
+                    <option value="Kuala Langat">Kuala Langat</option>
+                    <option value="Petaling">Petaling</option>
+                    <option value="Sepang">Sepang</option>
+                    <option value="Ulu Langat">Ulu Langat</option>
+                    <option value="W.P. Kuala Lumpur">W.P. Kuala Lumpur</option>
+                    <option value="W.P. Putrajaya">W.P. Putrajaya</option>
+                </select>
+            </div>
+            <div class="layer-legend" aria-label="Map legend">
+                <span class="legend-item"><span class="legend-dot legend-rail"></span>Railways</span>
+                <span class="legend-item"><span class="legend-dot legend-road"></span>Highways</span>
+                <span class="legend-item"><span class="legend-dot legend-mall"></span>Malls</span>
+                <span class="legend-item"><span class="legend-dot legend-edu"></span>Universities</span>
+                <span class="legend-item"><span class="legend-dot legend-sale"></span>Transactions</span>
+            </div>
+        </section>
+
+        <section class="map-viewport" aria-label="Klang Valley location intelligence map">
+            <div id="map"></div>
+        </section>
+    </main>
+    <footer class="site-footer">
+        <div class="footer-main">
+            <section class="footer-brand">
+                <div class="footer-logo"><img src="assets/KVProperty_no_bg.png?v=20260619-logo-final" alt="KVProperty"></div>
+                <p>Property intelligence for exploring Klang Valley prices, locations, access and nearby market signals.</p>
+            </section>
+
+            <section class="footer-links" aria-label="Quick links">
+                <h2>Quick Links</h2>
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="map.html">Map</a>
+                <a href="about.html">About</a>
+                <a href="prediction.html">Prediction</a>
+            </section>
+
+            <section class="footer-tech" aria-label="Technologies used">
+                <h2>Built With</h2>
+                <div>
+                    <span>Python</span>
+                    <span>Power BI</span>
+                    <span>Streamlit</span>
+                    <span>GeoJSON</span>
+                    <span>HTML</span>
+                    <span>CSS</span>
+                    <span>JavaScript</span>
+                </div>
+            </section>
+
+            <section class="footer-meta">
+                <h2>Focus</h2>
+                <p><span>Region</span> Klang Valley</p>
+                <p><span>Domain</span> Residential Property</p>
+                <p><span>Output</span> Dashboard, Map & Prediction</p>
+            </section>
+        </div>
+    </footer>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+
+        /* ====================================
+           BASE MAP
+        ==================================== */
+
+        const map = L.map('map').setView(
+            [3.1390, 101.6869],
+            10
+        );
+
+        L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                attribution:
+                    '&copy; OpenStreetMap contributors'
+            }
+        ).addTo(map);
+
+        /* ====================================
+           FILTER STATE
+        ==================================== */
+
+        let selectedDistrict = "all";
+
+        let railwaysData;
+        let highwaysData;
+        let economicZonesData;
+        let mallsData;
+        let universitiesData;
+        let transactionsData;
+
+        /* ====================================
+           LAYER GROUPS
+        ==================================== */
+
+        const railwaysLayer = L.layerGroup().addTo(map);
+        const highwaysLayer = L.layerGroup();
+
+        const economicZonesLayer = L.layerGroup();
+        const mallsLayer = L.layerGroup().addTo(map);
+        const universitiesLayer = L.layerGroup();
+
+        const transactionsLayer = L.layerGroup();
+
+        /* ====================================
+           DISTRICT FILTER
+        ==================================== */
+
+        document
+            .getElementById('districtFilter')
+            .addEventListener('change', function () {
+
+                selectedDistrict = this.value;
+
+                refreshLayers();
+
+            });
+
+        function matchesDistrict(feature) {
+
+            if (selectedDistrict === "all") {
+
+                return true;
+            }
+
+            return (
+                feature.properties.district === selectedDistrict
+            );
+        }
+
+        /* ====================================
+           LOAD DATA
+        ==================================== */
+
+        Promise.all([
+
+            fetch('geojson/kv_railways.geojson')
+                .then(r => r.json()),
+
+            fetch('geojson/kv_highways.geojson')
+                .then(r => r.json()),
+
+            fetch('geojson/kv_economic_zones.geojson')
+                .then(r => r.json()),
+
+            fetch('geojson/kv_malls.geojson')
+                .then(r => r.json()),
+
+            fetch('geojson/kv_universities.geojson')
+                .then(r => r.json()),
+
+            fetch('geojson/kv_transactions.geojson')
+                .then(r => r.json())
+
+        ]).then(([
+
+            railways,
+            highways,
+            economicZones,
+            malls,
+            universities,
+            transactions
+
+        ]) => {
+
+            railwaysData = railways;
+            highwaysData = highways;
+
+            economicZonesData = economicZones;
+            mallsData = malls;
+            universitiesData = universities;
+
+            transactionsData = transactions;
+
+            refreshLayers();
+
+        });
+
+        /* ====================================
+           REFRESH LAYERS
+        ==================================== */
+
+        function refreshLayers() {
+
+            railwaysLayer.clearLayers();
+            highwaysLayer.clearLayers();
+
+            economicZonesLayer.clearLayers();
+            mallsLayer.clearLayers();
+            universitiesLayer.clearLayers();
+
+            transactionsLayer.clearLayers();
+
+            /* RAILWAYS */
+
+            if (railwaysData) {
+
+                L.geoJSON(railwaysData, {
+
+                    filter: matchesDistrict,
+
+                    style: {
+                        color: '#3498db',
+                        weight: 3
+                    },
+
+                    onEachFeature: function(feature, layer) {
+
+                        layer.bindTooltip(
+                            feature.properties.name
+                        );
+
+                        layer.bindPopup(`
+                            <b>${feature.properties.name}</b><br>
+                            District: ${feature.properties.district}<br>
+                            Network: ${feature.properties.network}<br>
+                            Operator: ${feature.properties.operator}
+                        `);
+
+                    }
+
+                }).addTo(railwaysLayer);
+            }
+
+            /* HIGHWAYS */
+
+            if (highwaysData) {
+
+                L.geoJSON(highwaysData, {
+
+                    filter: matchesDistrict,
+
+                    style: {
+                        color: '#e74c3c',
+                        weight: 3
+                    },
+
+                    onEachFeature: function(feature, layer) {
+
+                        layer.bindTooltip(
+                            feature.properties.name
+                        );
+
+                        layer.bindPopup(`
+                            <b>${feature.properties.name}</b><br>
+                            District: ${feature.properties.district}
+                        `);
+
+                    }
+
+                }).addTo(highwaysLayer);
+            }
+
+            /* ECONOMIC ZONES */
+
+            if (economicZonesData) {
+
+                L.geoJSON(economicZonesData, {
+
+                    filter: matchesDistrict,
+
+                    style: {
+                        color: '#2ecc71',
+                        weight: 2,
+                        fillOpacity: 0.15
+                    },
+
+                    onEachFeature: function(feature, layer) {
+
+                        layer.bindTooltip(
+                            feature.properties.name
+                        );
+
+                        layer.bindPopup(`
+                            <b>${feature.properties.name}</b><br>
+                            District: ${feature.properties.district}
+                        `);
+
+                    }
+
+                }).addTo(economicZonesLayer);
+            }
+
+            /* MALLS */
+
+            if (mallsData) {
+
+                L.geoJSON(mallsData, {
+
+                    filter: matchesDistrict,
+
+                    pointToLayer: function(feature, latlng) {
+
+                        return L.circleMarker(latlng, {
+
+                            radius: 6,
+
+                            color: '#f39c12',
+
+                            fillColor: '#f39c12',
+
+                            fillOpacity: 0.8
+                        });
+
+                    },
+
+                    onEachFeature: function(feature, layer) {
+
+                        layer.bindTooltip(
+                            feature.properties.name
+                        );
+
+                        layer.bindPopup(`
+                            <b>${feature.properties.name}</b><br>
+                            District: ${feature.properties.district}
+                        `);
+
+                    }
+
+                }).addTo(mallsLayer);
+            }
+
+            /* UNIVERSITIES */
+
+            if (universitiesData) {
+
+                L.geoJSON(universitiesData, {
+
+                    filter: matchesDistrict,
+
+                    pointToLayer: function(feature, latlng) {
+
+                        return L.circleMarker(latlng, {
+
+                            radius: 6,
+
+                            color: '#9b59b6',
+
+                            fillColor: '#9b59b6',
+
+                            fillOpacity: 0.8
+                        });
+
+                    },
+
+                    onEachFeature: function(feature, layer) {
+
+                        layer.bindTooltip(
+                            feature.properties.name
+                        );
+
+                        layer.bindPopup(`
+                            <b>${feature.properties.name}</b><br>
+                            District: ${feature.properties.district}
+                        `);
+
+                    }
+
+                }).addTo(universitiesLayer);
+            }
+
+            /* TRANSACTIONS */
+
+            if (transactionsData) {
+
+                L.geoJSON(transactionsData, {
+
+                    filter: matchesDistrict,
+
+                    pointToLayer: function(feature, latlng) {
+
+                        return L.circleMarker(latlng, {
+
+                            radius: 4,
+
+                            color: '#34495e',
+
+                            fillColor: '#34495e',
+
+                            fillOpacity: 0.5
+                        });
+
+                    },
+
+                    onEachFeature: function(feature, layer) {
+
+                        layer.bindTooltip(
+                            feature.properties.property_type
+                        );
+
+                        layer.bindPopup(`
+                            <b>${feature.properties.property_type}</b><br>
+                            District: ${feature.properties.district}<br>
+                            Transaction Price:
+                            RM ${Number(feature.properties.transaction_price).toLocaleString()}
+                        `);
+
+                    }
+
+                }).addTo(transactionsLayer);
+            }
+        }
+
+        /* ====================================
+           LAYER CONTROL
+        ==================================== */
+
+        L.control.layers(
+            null,
+            {
+                "Infrastructure: Railways":
+                    railwaysLayer,
+
+                "Infrastructure: Highways":
+                    highwaysLayer,
+
+                "Economic: Economic Zones":
+                    economicZonesLayer,
+
+                "Economic: Shopping Malls":
+                    mallsLayer,
+
+                "Economic: Universities":
+                    universitiesLayer,
+
+                "Property: Transactions":
+                    transactionsLayer
+            },
+            {
+                collapsed: false
+            }
+        ).addTo(map);
+
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
